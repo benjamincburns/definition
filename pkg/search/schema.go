@@ -75,3 +75,30 @@ func (searcher schemaSearcher) FindSidecarsByService(spec schema.RootSchema,
 	}
 	return out
 }
+
+func getCounts(system []schema.SystemComponent) map[string]int64 {
+	out := map[string]int64{}
+	for _, component := range system {
+		out[component.Type] = component.GetCount()
+	}
+	return out
+}
+
+func FindServiceMaxCounts(spec schema.RootSchema) map[string]int64 {
+	candidates := []map[string]int64{}
+	for _, test := range spec.Tests {
+		candidates = append(candidates, getCounts(test.System))
+		for _, phase := range test.Phases {
+			candidates = append(candidates, getCounts(phase.System))
+		}
+	}
+	out := map[string]int64{}
+	for i := range candidates {
+		for k, v := range candidates[i] {
+			if out[k] < v {
+				out[k] = v
+			}
+		}
+	}
+	return out
+}
