@@ -9,9 +9,9 @@ package parser
 import (
 	"testing"
 
+	"github.com/whiteblock/definition/pkg/entity"
 	mockConverter "github.com/whiteblock/definition/pkg/mocks/converter"
 	mockSearch "github.com/whiteblock/definition/pkg/mocks/search"
-	"github.com/whiteblock/definition/pkg/entity"
 	"github.com/whiteblock/definition/schema"
 
 	"github.com/stretchr/testify/assert"

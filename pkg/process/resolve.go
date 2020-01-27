@@ -10,8 +10,8 @@ import (
 	"fmt"
 
 	"github.com/whiteblock/definition/command"
-	"github.com/whiteblock/definition/pkg/maker"
 	"github.com/whiteblock/definition/pkg/entity"
+	"github.com/whiteblock/definition/pkg/maker"
 	"github.com/whiteblock/definition/pkg/namer"
 	"github.com/whiteblock/definition/schema"
 

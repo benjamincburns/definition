@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	"github.com/whiteblock/definition/config"
-	mockParser "github.com/whiteblock/definition/pkg/mocks/parser"
 	"github.com/whiteblock/definition/pkg/entity"
+	mockParser "github.com/whiteblock/definition/pkg/mocks/parser"
 	"github.com/whiteblock/definition/schema"
 
 	"github.com/sirupsen/logrus"

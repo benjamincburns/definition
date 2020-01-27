@@ -14,9 +14,9 @@ import (
 	"github.com/whiteblock/definition/config"
 	"github.com/whiteblock/definition/pkg"
 	"github.com/whiteblock/definition/pkg/distribute"
+	"github.com/whiteblock/definition/pkg/entity"
 	parse "github.com/whiteblock/definition/pkg/parser"
 	"github.com/whiteblock/definition/pkg/process"
-	"github.com/whiteblock/definition/pkg/entity"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

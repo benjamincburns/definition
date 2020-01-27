@@ -10,10 +10,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/whiteblock/definition/pkg/merger"
-	"github.com/whiteblock/definition/pkg/parser"
 	"github.com/whiteblock/definition/pkg/entity"
+	"github.com/whiteblock/definition/pkg/merger"
 	"github.com/whiteblock/definition/pkg/namer"
+	"github.com/whiteblock/definition/pkg/parser"
 	"github.com/whiteblock/definition/schema"
 )
 

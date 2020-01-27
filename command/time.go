@@ -10,6 +10,8 @@ import (
 	"encoding/json"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -76,6 +78,9 @@ func (to *Timeout) UnmarshalJSON(data []byte) error {
 		}
 		strVal = strings.Replace(strVal, " ", "", -1)
 		to.Duration, err = time.ParseDuration(strVal)
+		if err != nil {
+			err = errors.Wrap(err, "unable to parse timeout")
+		}
 		return err
 	}
 
@@ -127,6 +132,9 @@ func (to *Duration) UnmarshalJSON(data []byte) error {
 		}
 		strVal = strings.Replace(strVal, " ", "", -1)
 		to.Duration, err = time.ParseDuration(strVal)
+		if err != nil {
+			err = errors.Wrap(err, "unable to parse duration")
+		}
 		return err
 	}
 
