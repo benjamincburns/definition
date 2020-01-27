@@ -59,6 +59,9 @@ type Container struct {
 
 	// IP is the IP address on the primary network
 	IP string `json:"ip"`
+
+	// AutoRemove flags a container to be automatically removed
+	AutoRemove bool `json"autoremove"`
 }
 
 // GetMemory gets the memory value as an integer.

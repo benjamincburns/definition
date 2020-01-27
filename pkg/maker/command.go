@@ -109,8 +109,9 @@ func (cmd commandMaker) CreateContainer(state *entity.State, service entity.Serv
 			Memory:      fmt.Sprint(cmd.service.GetMemory(service)),
 			Image:       cmd.service.GetImage(service),
 
-			Args: cmd.service.GetArgs(service),
-			IP:   cmd.service.GetIP(state, service),
+			Args:       cmd.service.GetArgs(service),
+			IP:         cmd.service.GetIP(state, service),
+			AutoRemove: service.IsTask,
 		},
 	}
 }
