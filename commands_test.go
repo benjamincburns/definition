@@ -1042,5 +1042,5 @@ func TestBasicSubstitution(t *testing.T) {
 	}
 
 	assert.Len(t, inputs, 18, "Expected 18 unique inputs")
-	assert.Equal(t, 18, cntrCount, "There should only be 15 containers created")
+	assert.Equal(t, 18, cntrCount, "There should only be 18 containers created")
 }
