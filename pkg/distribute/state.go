@@ -55,7 +55,7 @@ func (state systemState) UpdateChanged(sp *entity.StatePack, spec schema.RootSch
 		if !exists {
 			return nil, nil, ErrSystemNotFound
 		}
-		system := merger.MergeSystemLeft(systemUpdate, old)
+		system := merger.MergeSystemLeft(old, systemUpdate)
 
 		segs, err := state.parser.FromSystemDiff(spec, old, system)
 		if err != nil {

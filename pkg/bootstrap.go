@@ -28,6 +28,7 @@ func GetFunctionality(conf config.Config, logger logrus.Ext1FieldLogger) (proces
 				converter.NewResource(
 					conf.Defaults.Resources,
 				),
+				logger,
 			),
 			distribute.NewSystemState(
 				parser.NewResources(
@@ -35,6 +36,7 @@ func GetFunctionality(conf config.Config, logger logrus.Ext1FieldLogger) (proces
 					converter.NewResource(
 						conf.Defaults.Resources,
 					),
+					logger,
 				),
 			),
 			logger,

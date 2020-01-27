@@ -26,19 +26,19 @@ type BiomeCalculator interface {
 type biomeCalculator struct {
 	parser parser.Resources
 	state  SystemState
-	logger logrus.Ext1FieldLogger
+	log    logrus.Ext1FieldLogger
 }
 
 func NewBiomeCalculator(
 	parser parser.Resources,
 	state SystemState,
-	logger logrus.Ext1FieldLogger) BiomeCalculator {
+	log logrus.Ext1FieldLogger) BiomeCalculator {
 
-	return &biomeCalculator{parser: parser, state: state, logger: logger}
+	return &biomeCalculator{parser: parser, state: state, log: log}
 }
 
 func (bc *biomeCalculator) NewStatePack(spec schema.RootSchema, conf config.Bucket) *entity.StatePack {
-	return entity.NewStatePack(spec, conf, bc.logger)
+	return entity.NewStatePack(spec, conf, bc.log)
 }
 
 func (bc *biomeCalculator) AddNextPhase(sp *entity.StatePack, phase schema.Phase) error {
@@ -67,10 +67,15 @@ func (bc *biomeCalculator) AddNextPhase(sp *entity.StatePack, phase schema.Phase
 		if err != nil {
 			return err
 		}
+		bc.log.WithFields(logrus.Fields{
+			"adding":   add,
+			"removing": remove,
+			"phase":    phase.Name,
+		}).Debug("calculated system changes")
 		addSysSegs = append(addSysSegs, add...)
 		toRemove = append(toRemove, remove...)
 	}
-	bc.logger.WithFields(logrus.Fields{
+	bc.log.WithFields(logrus.Fields{
 		"adding":   addSysSegs,
 		"removing": toRemove,
 		"systems":  systems,

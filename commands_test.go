@@ -19,7 +19,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/whiteblock/go-prettyjson"
-	"github.com/whiteblock/utility/utils"
 
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -31,7 +30,7 @@ func getTestCommands(t *testing.T) Commands {
 	require.NoError(t, err)
 	conf, err := config.New(v)
 	require.NoError(t, err)
-	return NewCommands(conf, utils.NewTestingLogger(t))
+	return NewCommands(conf, conf.Logger.GetLogger())
 }
 
 func TestAllTheThings(t *testing.T) {
@@ -963,27 +962,10 @@ var substitutionExample = []byte(`services:
       memory: 4 GB
       storage: 5 GiB
     input-files:
-      - source-path: genesis.json
-        destination-path: /data/genesis.json
-      - source-path: permissioned-nodes.json
-        destination-path: /data/permissioned-nodes.json
-      - source-path: permissioned-nodes.json
-        destination-path: /data/static-nodes.json
       - source-path: key$_n
         destination-path: /data/keystore/key$_n
       - source-path: nodekey$_n
-        destination-path: /data/nodekey
-      - source-path: passwords.txt
-        destination-path: /data/passwords.txt
-    script:
-      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats $NAME:secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum                   
-  - name: ethstats
-    image: gcr.io/whiteblock/ethstats:master
-    environment:
-      HOST: "0.0.0.0"
-    input-files:
-      - source-path: ws_secret.json
-        destination-path: /eth-netstats/ws_secret.json     
+        destination-path: /data/nodekey                
 sidecars:
   - name: side
     sidecar-to:
@@ -1007,9 +989,14 @@ tests:
         port-mappings:
           - "30303:30303"
           - "8545:8545"
-      - type: ethstats
-        port-mappings:
-          - "80:3000"
+    phases:
+      - name: increase
+        system: 
+        - type: Quorum
+          count: 9
+          port-mappings:
+          - "30303:30303"
+          - "8545:8545"
 `)
 
 func TestBasicSubstitution(t *testing.T) {
@@ -1023,12 +1010,11 @@ func TestBasicSubstitution(t *testing.T) {
 	require.Len(t, dists, 1)
 	require.NotNil(t, dists[0])
 
-	for i := range dists {
-		require.True(t, len(*dists[i]) > 0)
-		for j := range *dists[i] {
-			require.True(t, len((*dists[i])[j]) > 0 || j == 0, fmt.Sprintf("distributions should not be empty %d", j))
+	require.True(t, len(*dists[0]) > 0)
+	require.Len(t, *dists[0], 2)
+	for j := range *dists[0] {
+		require.True(t, len((*dists[0])[j]) > 0 || j == 0, fmt.Sprintf("distributions should not be empty %d", j))
 
-		}
 	}
 
 	tests, err := cmds.GetTests(def, Meta{})
@@ -1056,5 +1042,5 @@ func TestBasicSubstitution(t *testing.T) {
 	}
 
 	assert.Len(t, inputs, 18, "Expected 18 unique inputs")
-	assert.Equal(t, 15, cntrCount, "There should only be 15 containers created")
+	assert.Equal(t, 18, cntrCount, "There should only be 15 containers created")
 }

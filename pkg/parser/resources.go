@@ -7,7 +7,6 @@
 package parser
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -16,6 +15,8 @@ import (
 	"github.com/whiteblock/definition/pkg/namer"
 	"github.com/whiteblock/definition/pkg/search"
 	"github.com/whiteblock/definition/schema"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Resources presents methods for extracting named resources from parts of the schema
@@ -30,16 +31,19 @@ type Resources interface {
 type resources struct {
 	searcher search.Schema
 	conv     converter.Resource
+	log      logrus.Ext1FieldLogger
 }
 
 // NewResources creates a new Resources
 func NewResources(
 	searcher search.Schema,
-	conv converter.Resource) Resources {
+	conv converter.Resource,
+	log logrus.Ext1FieldLogger) Resources {
 
 	return &resources{
 		searcher: searcher,
 		conv:     conv,
+		log:      log,
 	}
 }
 
@@ -47,6 +51,7 @@ func (res *resources) FromSystemDiff(spec schema.RootSchema,
 	system schema.SystemComponent, merged schema.SystemComponent) ([]entity.Segment, error) {
 
 	if merged.GetCount() == system.GetCount() {
+		res.log.WithField("system", system.GetName()).Trace("no system diff")
 		return nil, nil
 	}
 	if merged.GetCount() < system.GetCount() {
@@ -61,7 +66,7 @@ func (res *resources) FromSystemDiff(spec schema.RootSchema,
 	if err != nil {
 		return nil, err
 	}
-	services = services[int(merged.GetCount()-system.GetCount()):]
+	services = services[len(services)-int(merged.GetCount()-system.GetCount()):]
 	return services, nil
 }
 
@@ -82,10 +87,6 @@ func (res *resources) SystemComponent(spec schema.RootSchema,
 
 		for _, pm := range sys.PortMappings {
 			ports := strings.Split(pm, ":")
-			if len(ports) != 2 {
-				return nil, fmt.Errorf(`invalid port mapping "%s"`, pm)
-			}
-
 			hostPort, err := strconv.Atoi(ports[0])
 			if err != nil {
 				return nil, err

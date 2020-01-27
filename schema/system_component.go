@@ -45,3 +45,10 @@ func (sc SystemComponent) GetCount() int64 {
 	}
 	return sc.Count
 }
+
+func (sc SystemComponent) GetName() string {
+	if sc.Name != "" {
+		return sc.Name
+	}
+	return sc.Type
+}
