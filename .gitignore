@@ -12,3 +12,5 @@
 *.out
 /mocks
 /internal/mocks
+/pkg/mocks/
+/pkg/mocks
