@@ -57,6 +57,8 @@ type Meta struct {
 
 	// Domains are domain names for the created instances. This field is optional.
 	Domains []string
+
+	Limits common.TestLimits
 }
 
 // NewCommands creates a new command extractor from the given viper config
