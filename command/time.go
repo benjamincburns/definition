@@ -19,6 +19,10 @@ const (
 	DefaultTimeout   = 2 * time.Minute
 )
 
+var (
+	InfiniteDuration = Duration{Time{isInfinite: true}}
+)
+
 // Time represents the frame of time which can be infinite
 type Time struct {
 	time.Duration
