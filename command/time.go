@@ -44,7 +44,7 @@ func (to Time) MarshalYAML() (interface{}, error) {
 	if to.IsInfinite() {
 		return InfiniteTimeTerm, nil
 	}
-	return to.Duration, nil
+	return to.Duration.String(), nil
 }
 
 type Timeout struct {

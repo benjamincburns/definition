@@ -21,6 +21,11 @@ func TestTimeoutMarshal(t *testing.T) {
 	data, err := yaml.Marshal(to)
 	require.NoError(t, err)
 	assert.Equal(t, "infinite", strings.TrimSpace(string(data)))
+
+	to = Timeout{Time{Duration: 0, isInfinite: false}}
+	data, err = yaml.Marshal(to)
+	require.NoError(t, err)
+	assert.Equal(t, "0s", strings.TrimSpace(string(data)))
 }
 
 func TestTimeoutJSONUnmarshal(t *testing.T) {
