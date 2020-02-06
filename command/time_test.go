@@ -34,3 +34,9 @@ func TestTimeoutJSONUnmarshal(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, to.IsInfinite())
 }
+
+func TestDurationMarshal(t *testing.T) {
+	data, err := yaml.Marshal(InfiniteDuration)
+	require.NoError(t, err)
+	assert.Equal(t, "infinite", strings.TrimSpace(string(data)))
+}
