@@ -59,6 +59,8 @@ type Meta struct {
 	Domains []string
 
 	Limits common.TestLimits
+
+	DockerAuth string
 }
 
 // NewCommands creates a new command extractor from the given viper config
@@ -116,6 +118,7 @@ func (cmdParser commands) GetTests(def Definition, meta Meta) ([]command.Test, e
 			},
 		}
 		out[i].PlaceInProperIDs(logger, meta.Files)
+		out[i].PlaceInCredentials(logger, meta.DockerAuth)
 	}
 	return out, nil
 }

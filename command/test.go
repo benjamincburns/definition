@@ -270,6 +270,22 @@ func (instruct *Instructions) PlaceInProperIDs(log logrus.Ext1FieldLogger, files
 	}
 }
 
+func (instruct *Instructions) PlaceInCredentials(log logrus.Ext1FieldLogger, auth string) {
+	if auth == "" {
+		return
+	}
+	for j := range instruct.Commands {
+		for k := range instruct.Commands[j] {
+			if instruct.Commands[j][k].Order.Type != Pullimage {
+				continue
+			}
+			payload := instruct.Commands[j][k].Order.Payload.(PullImage)
+			payload.RegistryAuth = auth
+			instruct.Commands[j][k].Order.Payload = payload
+		}
+	}
+}
+
 func (instruct *Instructions) PartialCompletion(failed []string) error {
 	if len(instruct.Commands) == 0 {
 		return ErrNoCommands
