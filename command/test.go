@@ -270,8 +270,8 @@ func (instruct *Instructions) PlaceInProperIDs(log logrus.Ext1FieldLogger, files
 	}
 }
 
-func (instruct *Instructions) PlaceInCredentials(log logrus.Ext1FieldLogger, auth string) {
-	if auth == "" {
+func (instruct *Instructions) PlaceInCredentials(log logrus.Ext1FieldLogger, auth Credentials) {
+	if auth.Empty() {
 		return
 	}
 	for j := range instruct.Commands {
@@ -280,7 +280,7 @@ func (instruct *Instructions) PlaceInCredentials(log logrus.Ext1FieldLogger, aut
 				continue
 			}
 			payload := instruct.Commands[j][k].Order.Payload.(PullImage)
-			payload.RegistryAuth = auth
+			payload.Credentials = auth
 			instruct.Commands[j][k].Order.Payload = payload
 		}
 	}

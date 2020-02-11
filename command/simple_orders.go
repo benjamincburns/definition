@@ -36,12 +36,20 @@ type SetupSwarm struct {
 	Hosts []string `json:"hosts"`
 }
 
+type Credentials struct {
+	Username      string `json:"username,omitempty"`
+	Password      string `json:"password,omitempty"`
+	RegistryToken string `json:"registrytoken,omitempty"`
+}
+
+func (cred Credentials) Empty() bool {
+	return cred.Username == "" && cred.Password == "" && cred.RegistryToken == ""
+}
+
 // PullImage contains the information necessary to pull a docker image from a registry
 type PullImage struct {
 	Image string `json:"image"`
-
-	// RegistryAuth is the base64 encoded credentials for the registry (optional)
-	RegistryAuth string `json:"registryAuth,omitempty"`
+	Credentials
 }
 
 // StartContainer is the command for starting a container

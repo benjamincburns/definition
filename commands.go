@@ -60,7 +60,7 @@ type Meta struct {
 
 	Limits common.TestLimits
 
-	DockerAuth string
+	DockerAuth command.Credentials
 }
 
 // NewCommands creates a new command extractor from the given viper config
