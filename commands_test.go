@@ -1044,3 +1044,71 @@ func TestBasicSubstitution(t *testing.T) {
 	assert.Len(t, inputs, 18, "Expected 18 unique inputs")
 	assert.Equal(t, 18, cntrCount, "There should only be 18 containers created")
 }
+
+
+var testUniqueIPs = []byte(`services:
+  - name: bitcoin
+    image: nicolasdorier/docker-bitcoin:0.16.3
+    args:
+      - bitcoind
+      - -testnet
+    resources:
+      cpus: 1
+      memory: 2 GB
+      storage: 5 GiB
+task-runners:
+  - name: testnet-expiration
+    script:
+      inline: sleep 600
+tests:
+  - name: simple-bitcoin-exercise
+    description: join the bitcoin testnet and validate some blocks
+    system:
+      - name: bitcoin-node-testnet
+        type: bitcoin
+        count: 4
+    phases:
+      - name: basic
+        tasks:
+          - type: testnet-expiration
+            timeout: 11 m`)
+
+
+func TestUniqueIPs(t *testing.T) {
+  def, err := SchemaYAML(testUniqueIPs)
+  require.NoError(t, err)
+
+  cmds := getTestCommands(t)
+  dists, err := cmds.GetDist(def)
+  require.NoError(t, err)
+  require.NotNil(t, dists)
+  require.Len(t, dists, 1)
+  require.NotNil(t, dists[0])
+
+  for i := range dists {
+    require.True(t, len(*dists[i]) > 0)
+    for j := range *dists[i] {
+      require.True(t, len((*dists[i])[j]) > 0, "distributions should not be empty")
+
+    }
+  }
+
+  tests, err := cmds.GetTests(def, Meta{})
+  require.NoError(t, err)
+  require.Len(t, tests, 1)
+  test := tests[0]
+  ips := map[string]bool{}
+  for _, outer := range test.Commands {
+    for _, inner := range outer {
+      switch inner.Order.Type {
+      case command.Attachnetwork:
+        var cont command.ContainerNetwork
+        err := inner.ParseOrderPayloadInto(&cont)
+        require.NoError(t, err)
+        _, exists := ips[cont.IP]
+        require.False(t, exists, "duplicate ip")
+        ips[cont.IP] = true
+      }
+    }
+  }
+}
