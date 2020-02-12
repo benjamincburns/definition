@@ -62,6 +62,8 @@ type Container struct {
 
 	// AutoRemove flags a container to be automatically removed
 	AutoRemove bool `json"autoremove"`
+
+	Credentials
 }
 
 // GetMemory gets the memory value as an integer.

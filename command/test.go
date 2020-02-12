@@ -276,12 +276,16 @@ func (instruct *Instructions) PlaceInCredentials(log logrus.Ext1FieldLogger, aut
 	}
 	for j := range instruct.Commands {
 		for k := range instruct.Commands[j] {
-			if instruct.Commands[j][k].Order.Type != Pullimage {
-				continue
+			switch instruct.Commands[j][k].Order.Type {
+			case Pullimage:
+				payload := instruct.Commands[j][k].Order.Payload.(PullImage)
+				payload.Credentials = auth
+				instruct.Commands[j][k].Order.Payload = payload
+			case Createcontainer:
+				payload := instruct.Commands[j][k].Order.Payload.(Container)
+				payload.Credentials = auth
+				instruct.Commands[j][k].Order.Payload = payload
 			}
-			payload := instruct.Commands[j][k].Order.Payload.(PullImage)
-			payload.Credentials = auth
-			instruct.Commands[j][k].Order.Payload = payload
 		}
 	}
 }
