@@ -9,6 +9,8 @@ package command
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/whiteblock/definition/command/biome"
@@ -35,6 +37,14 @@ const (
 
 	// DefinitionIDKey is the location of the definition in the meta
 	DefinitionIDKey = "definition"
+)
+
+const (
+	// ServiceNumberSub is the magical value which gets replaced with the node number in pre-processing for inputs
+	ServiceNumberSub = "$_n"
+
+	// HostDomainSub is the magical value which gets replaced with the host's DNS for env vars
+	HostDomainSub = "$_host"
 )
 
 var (
@@ -318,6 +328,74 @@ func (instruct *Instructions) PartialCompletion(failed []string) error {
 	}
 
 	instruct.Commands[0] = left
+	return nil
+}
+
+func (instruct *Instructions) InsertHostInfo(domains, ips []string) error {
+	for i := range instruct.Commands {
+		for j := range instruct.Commands[i] {
+			parsedIndex, err := strconv.Atoi(instruct.Commands[i][j].Target.IP)
+			if err != nil {
+				return err
+			}
+			instruct.Commands[i][j].Target.IP = ips[parsedIndex]
+			switch instruct.Commands[i][j].Order.Type {
+			case SwarmInit:
+				var payload SetupSwarm
+				err := instruct.Commands[i][j].ParseOrderPayloadInto(&payload)
+				if err != nil {
+					return err
+				}
+				for k := range payload.Hosts {
+					parsedIndex, err := strconv.Atoi(payload.Hosts[k])
+					if err != nil {
+						return err
+					}
+					payload.Hosts[k] = ips[parsedIndex]
+				}
+				instruct.Commands[i][j].Order.Payload = payload
+			case Volumeshare:
+				var payload VolumeShare
+				err := instruct.Commands[i][j].ParseOrderPayloadInto(&payload)
+				if err != nil {
+					return err
+				}
+				for k := range payload.Hosts {
+					parsedIndex, err := strconv.Atoi(payload.Hosts[k])
+					if err != nil {
+						return err
+					}
+					payload.Hosts[k] = ips[parsedIndex]
+				}
+				instruct.Commands[i][j].Order.Payload = payload
+			case Createvolume:
+				var payload Volume
+				err := instruct.Commands[i][j].ParseOrderPayloadInto(&payload)
+				if err != nil {
+					return err
+				}
+				for k := range payload.Hosts {
+					parsedIndex, err := strconv.Atoi(payload.Hosts[k])
+					if err != nil {
+						return err
+					}
+					payload.Hosts[k] = ips[parsedIndex]
+				}
+				instruct.Commands[i][j].Order.Payload = payload
+			case Createcontainer:
+				var payload Container
+				err := instruct.Commands[i][j].ParseOrderPayloadInto(&payload)
+				if err != nil {
+					return err
+				}
+				for key := range payload.Environment {
+					payload.Environment[key] = strings.Replace(payload.Environment[key],
+						HostDomainSub, domains[parsedIndex], -1)
+				}
+				instruct.Commands[i][j].Order.Payload = payload
+			}
+		}
+	}
 	return nil
 }
 
