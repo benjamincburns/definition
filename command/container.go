@@ -103,6 +103,11 @@ func (c Container) GetEntryPoint() strslice.StrSlice {
 	return strslice.StrSlice(append([]string{c.EntryPoint}, c.Args...))
 }
 
+//GetCmd gets the commands
+func (c Container) GetCmd() strslice.StrSlice {
+	return strslice.StrSlice(c.Args)
+}
+
 // GetMounts gets the docker mounts for the docker container
 func (c Container) GetMounts() []mount.Mount {
 	out := []mount.Mount{}
