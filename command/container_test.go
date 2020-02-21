@@ -163,7 +163,7 @@ func TestContainer_GetEntryPoint(t *testing.T) {
 				EntryPoint: "/test/path",
 				Args:       []string{"test", "arguments", "as", "flags"},
 			},
-			expected: strslice.StrSlice{"/test/path", "test", "arguments", "as", "flags"},
+			expected: strslice.StrSlice{"/test/path"},
 		},
 	}
 
