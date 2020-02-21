@@ -100,7 +100,7 @@ func (c Container) GetEntryPoint() strslice.StrSlice {
 	if len(c.EntryPoint) == 0 {
 		return nil
 	}
-	return strslice.StrSlice(append([]string{c.EntryPoint}, c.Args...))
+	return strslice.StrSlice([]string{c.EntryPoint})
 }
 
 //GetCmd gets the commands
