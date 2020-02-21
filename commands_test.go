@@ -1119,3 +1119,72 @@ func TestUniqueIPs(t *testing.T) {
 		}
 	}
 }
+
+var testDSL = []byte(`services:
+  - name: bitcoin
+    image: nicolasdorier/docker-bitcoin:0.16.3
+    args:
+      - bitcoind
+      - '$_one_of(bitcoin,net)'
+    environment:
+      FOO: '$_one_of(bitcoin,net)'
+tests:
+  - name: simple-bitcoin-exercise
+    system:
+      - type: bitcoin
+        resources:
+          networks:
+            - name: net
+`)
+
+func TestDSL(t *testing.T) {
+	def, err := SchemaYAML(testDSL)
+	require.NoError(t, err)
+
+	cmds := getTestCommands(t)
+	dists, err := cmds.GetDist(def)
+	require.NoError(t, err)
+	require.NotNil(t, dists)
+	require.Len(t, dists, 1)
+	require.NotNil(t, dists[0])
+
+	for i := range dists {
+		require.True(t, len(*dists[i]) > 0)
+		for j := range *dists[i] {
+			require.True(t, len((*dists[i])[j]) > 0, "distributions should not be empty")
+
+		}
+	}
+
+	tests, err := cmds.GetTests(def, Meta{})
+	require.NoError(t, err)
+	require.Len(t, tests, 1)
+	test := tests[0]
+	ips := map[string]bool{}
+	for _, outer := range test.Commands {
+		for _, inner := range outer {
+			switch inner.Order.Type {
+
+			case command.Createcontainer:
+				var cont command.Container
+				err := inner.ParseOrderPayloadInto(&cont)
+				require.NoError(t, err)
+				fooVal, exists := cont.Environment["FOO"]
+				require.True(t, exists)
+				require.Len(t, cont.Args, 2)
+				assert.Equal(t, fooVal, cont.Args[1])
+				assert.NotContains(t, fooVal, "$_one_of") //verify substitution
+				_, exists = ips[fooVal]
+				require.False(t, exists)
+				ips[fooVal] = true
+
+			case command.Attachnetwork:
+				var cont command.ContainerNetwork
+				err := inner.ParseOrderPayloadInto(&cont)
+				require.NoError(t, err)
+				_, exists := ips[cont.IP] //verify correct IP
+				require.True(t, exists)
+			}
+		}
+	}
+}

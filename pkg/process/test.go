@@ -12,6 +12,7 @@ import (
 
 	"github.com/whiteblock/definition/command"
 	"github.com/whiteblock/definition/config"
+	"github.com/whiteblock/definition/pkg/dsl"
 	"github.com/whiteblock/definition/pkg/entity"
 	"github.com/whiteblock/definition/pkg/parser"
 	"github.com/whiteblock/definition/schema"
@@ -321,6 +322,22 @@ func (calc testCalculator) Env(spec schema.RootSchema,
 	return envVars, err
 }
 
+func (calc testCalculator) injectDSL(ips map[string]string, order *command.Container) (err error) {
+	for i := range order.Args {
+		order.Args[i], err = dsl.ExecuteDSL(ips, order.Args[i])
+		if err != nil {
+			return err
+		}
+	}
+	for key := range order.Environment {
+		order.Environment[key], err = dsl.ExecuteDSL(ips, order.Environment[key])
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (calc testCalculator) Commands(spec schema.RootSchema,
 	dist *entity.ResourceDist, index int) (entity.TestCommands, error) {
 
@@ -336,6 +353,10 @@ func (calc testCalculator) Commands(spec schema.RootSchema,
 			var order command.Container
 
 			err = out[i][j].ParseOrderPayloadInto(&order)
+			if err != nil {
+				return nil, err
+			}
+			err = calc.injectDSL(envVars, &order)
 			if err != nil {
 				return nil, err
 			}
