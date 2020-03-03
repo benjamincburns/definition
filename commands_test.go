@@ -59,7 +59,7 @@ func TestAllTheThings(t *testing.T) {
       - source-path: passwords.txt
         destination-path: /data/passwords.txt
     script:
-      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1                      
+      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1
   - name: Quorum2
     image: quorumengineering/quorum:2.2.5
     volumes:
@@ -83,7 +83,7 @@ func TestAllTheThings(t *testing.T) {
       - source-path: passwords.txt
         destination-path: /data/passwords.txt
     script:
-      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1                        
+      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1
   - name: Quorum3
     image: quorumengineering/quorum:2.2.5
     volumes:
@@ -107,7 +107,7 @@ func TestAllTheThings(t *testing.T) {
       - source-path: passwords.txt
         destination-path: /data/passwords.txt
     script:
-      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1   
+      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1
   - name: Quorum4
     image: quorumengineering/quorum:2.2.5
     volumes:
@@ -134,7 +134,7 @@ func TestAllTheThings(t *testing.T) {
       - source-path: passwords.txt
         destination-path: /data/passwords.txt
     script:
-      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1   
+      inline: geth --datadir /data init data/genesis.json && geth --datadir /data --unlock 0 --password /data/passwords.txt --ethstats Node1:eea_testnet_secret@eea:80 --syncmode full --mine --minerthreads 1 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum > /output.log 2>&1
   - name: Quorum5
     image: quorumengineering/quorum:2.2.5
     volumes:
@@ -215,7 +215,7 @@ func TestAllTheThings(t *testing.T) {
       HOST: "0.0.0.0"
     input-files:
       - source-path: ws_secret.json
-        destination-path: /eth-netstats/ws_secret.json     
+        destination-path: /eth-netstats/ws_secret.json
 sidecars:
   - name: side
     sidecar-to:
@@ -244,55 +244,55 @@ tests:
         port-mappings:
           - "30303:30303"
           - "8545:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: Quorum2
         port-mappings:
           - "30304:30303"
           - "8546:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: Quorum3
         port-mappings:
           - "30305:30303"
           - "8547:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: Quorum4
         port-mappings:
           - "30306:30303"
           - "8548:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: Quorum5
         port-mappings:
           - "30307:30303"
           - "8549:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: Quorum6
         port-mappings:
           - "30308:30303"
           - "8550:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: Quorum7
         port-mappings:
           - "30308:30303"
           - "8551:8545"
-        resources: 
+        resources:
             networks:
               - name: quorum_network
       - type: ethstats
         port-mappings:
           - "80:3000"
-        resources: 
+        resources:
             networks:
               - name: quorum_network`)
 
@@ -622,7 +622,7 @@ var test3 = []byte(`services:
       storage: 1 GiB
     volumes:
       - name: test
-        path: /var/hello 
+        path: /var/hello
         scope: global
 task-runners:
   - name: wait-5-minutes
@@ -834,14 +834,14 @@ func TestComposeLikeSpec(t *testing.T) {
 	assert.Equal(t, 4, cntrCount, "There should only be 4 containers created")
 }
 
-var sidecarTest = []byte(`services: 
+var sidecarTest = []byte(`services:
   - name: geth1
-    image: "ethereum/client-go:alltools-latest" 
+    image: "ethereum/client-go:alltools-latest"
     script:
       inline: geth
-  - name: geth2 
+  - name: geth2
     image: "ethereum/client-go:alltools-latest"
-    script: 
+    script:
       inline: geth
 sidecars:
   - name: bash
@@ -855,24 +855,24 @@ sidecars:
 task-runners:
   - name: geth-staticpeers-helper
     image: "gcr.io/whiteblock/helpers/besu/staticpeers:master"
-    script: 
+    script:
       inline: help me
-tests: 
-  - name: geth_network_2_nodes 
+tests:
+  - name: geth_network_2_nodes
     phases:
       - name: create
-        tasks: 
+        tasks:
         - type: geth-staticpeers-helper
       - name: start
         description: start the remaining node(s)
-        system: 
-        - type: geth1 
-          resources: 
-            networks: 
+        system:
+        - type: geth1
+          resources:
+            networks:
               - name: common-network
-        - type: geth2 
-          resources: 
-            networks: 
+        - type: geth2
+          resources:
+            networks:
               - name: common-network
 `)
 
@@ -965,7 +965,7 @@ var substitutionExample = []byte(`services:
       - source-path: key$_n
         destination-path: /data/keystore/key$_n
       - source-path: nodekey$_n
-        destination-path: /data/nodekey                
+        destination-path: /data/nodekey
 sidecars:
   - name: side
     sidecar-to:
@@ -991,7 +991,7 @@ tests:
           - "8545:8545"
     phases:
       - name: increase
-        system: 
+        system:
         - type: Quorum
           count: 9
           port-mappings:
