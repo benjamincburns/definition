@@ -87,7 +87,7 @@ func (res *resources) SystemComponent(spec schema.RootSchema,
 
 		for _, pm := range sys.PortMappings {
 			ports := strings.Split(pm, ":")
-			hostPort, err := strconv.Atoi(ports[0])
+			hostPort, err := strconv.Atoi(strings.Split(ports[0], "/")[0])
 			if err != nil {
 				return nil, err
 			}
