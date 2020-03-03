@@ -8,6 +8,7 @@ package command
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/strslice"
@@ -36,7 +37,7 @@ type Container struct {
 	Network string `json:"network"`
 
 	// Ports to be opened for each container, each port associated.
-	Ports map[int]int `json:"ports"`
+	Ports map[string]string `json:"ports"`
 
 	// Volumes are the docker volumes to be mounted on this container
 	Volumes []Mount `json:"volumes"`
@@ -87,7 +88,11 @@ func (c Container) GetPortBindings() (nat.PortSet, nat.PortMap, error) {
 	}
 	dockerPorts := []string{}
 	for hostPort, containerPort := range c.Ports {
-		dockerPorts = append(dockerPorts, fmt.Sprintf("0.0.0.0:%d:%d/tcp", hostPort, containerPort))
+		port := fmt.Sprintf("0.0.0.0:%s:%s", hostPort, containerPort)
+		if !strings.Contains(port, "/") {
+			port += "/tcp"
+		}
+		dockerPorts = append(dockerPorts, port)
 	}
 	portSet, portMap, err := nat.ParsePortSpecs(dockerPorts)
 	return nat.PortSet(portSet), nat.PortMap(portMap), err

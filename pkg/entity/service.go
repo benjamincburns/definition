@@ -25,7 +25,7 @@ type Service struct {
 	Networks        []schema.Network
 	Sidecars        []schema.Sidecar
 	Labels          map[string]string
-	Ports           map[int]int
+	Ports           map[string]string
 
 	Timeout        command.Timeout
 	IsTask         bool
@@ -52,6 +52,7 @@ func GetDefaultService(def defaults.Defaults) Service {
 		},
 		Networks: nil,
 		Sidecars: nil,
+		Ports:    map[string]string{},
 	}
 }
 

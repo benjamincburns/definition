@@ -8,7 +8,6 @@ package maker
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/whiteblock/definition/config/defaults"
@@ -104,7 +103,6 @@ func (sp *serviceMaker) FromSystemDiff(spec schema.RootSchema,
 			out.Modified = append(out.Modified, services[i].CalculateDiff(oldServices[i]))
 		}
 	}
-
 	return out, nil
 }
 
@@ -136,34 +134,24 @@ func (sp *serviceMaker) FromSystem(spec schema.RootSchema,
 	if system.Resources.Storage != "" {
 		squashed.Resources.Storage = system.Resources.Storage
 	}
-
-	portMapping := map[int]int{}
+	base := entity.GetDefaultService(sp.defaults)
+	base.Networks = system.Resources.Networks
+	base.Sidecars = sp.searcher.FindSidecarsByService(spec, system.Type)
 	for _, pm := range system.PortMappings {
 		ports := strings.Split(pm, ":")
 		if len(ports) != 2 {
 			return nil, fmt.Errorf(`invalid port mapping "%s"`, pm)
 		}
 
-		hostPort, err := strconv.Atoi(ports[0])
-		if err != nil {
-			return nil, err
-		}
-
-		cntrPort, err := strconv.Atoi(ports[1])
-		if err != nil {
-			return nil, err
-		}
+		hostPort := ports[0]
+		cntrPort := ports[1]
 		sp.log.WithFields(logrus.Fields{
 			"host":      hostPort,
 			"container": cntrPort,
-		}).Debug("processed port mapping")
-		portMapping[hostPort] = cntrPort
+		}).Trace("processed port mapping")
+		base.Ports[hostPort] = cntrPort
 	}
-	base := entity.GetDefaultService(sp.defaults)
 
-	base.Networks = system.Resources.Networks
-	base.Sidecars = sp.searcher.FindSidecarsByService(spec, system.Type)
-	base.Ports = portMapping
 	err = mergo.Map(&base.SquashedService, squashed, mergo.WithOverride)
 	if err != nil {
 		return nil, err

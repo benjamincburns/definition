@@ -250,7 +250,7 @@ tests:
       - type: Quorum2
         port-mappings:
           - "30304:30303"
-          - "8546:8545"
+          - "8546:8545/tcp"
         resources: 
             networks:
               - name: quorum_network

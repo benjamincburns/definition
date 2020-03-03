@@ -129,7 +129,7 @@ func TestContainer_GetPortBindings(t *testing.T) {
 		},
 		{
 			c: Container{
-				Ports: map[int]int{4000: 3000, 8000: 4444},
+				Ports: map[string]string{"4000": "3000", "8000": "4444"},
 			},
 			expectedPortSet: map[nat.Port]struct{}{"3000/tcp": struct{}{}, "4444/tcp": struct{}{}},
 			expectedPortMap: map[nat.Port][]nat.PortBinding{"3000/tcp": []nat.PortBinding{{HostIP: "0.0.0.0", HostPort: "4000"}}, "4444/tcp": []nat.PortBinding{{HostIP: "0.0.0.0", HostPort: "8000"}}},
